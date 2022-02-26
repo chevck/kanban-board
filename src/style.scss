@@ -1,0 +1,109 @@
+i {
+  cursor: pointer;
+}
+
+.create-row-btn {
+  background: #3a3a5d;
+  color: white;
+  font-size: 14px;
+  margin-right: 2.5rem;
+  left: 85%;
+  position: relative;
+  margin-top: 2rem;
+
+  &:hover {
+    color: white;
+  }
+}
+
+.context-box {
+  height: 8rem;
+}
+
+.modal-footer {
+  border-top: none;
+}
+
+.board-rows-wrapper {
+  display: flex;
+  margin-top: 2rem;
+  padding: 3rem;
+  overflow-x: scroll;
+  min-width: 4rem;
+  background-color: #f0f0f0;
+  height: 40rem;
+
+  .board-row {
+    width: 20rem;
+    margin-right: 2rem;
+    min-width: 20rem;
+
+    .header {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      .left-side {
+        background: black;
+        padding: 4px 6px;
+        color: white;
+        border-radius: 15px;
+        font-size: 14px;
+        padding-left: 10px;
+        .count {
+          border-radius: 50px;
+          padding: 3px;
+          color: black;
+          background: white;
+          margin-left: 6px;
+          width: 10px;
+          padding: 2px 6px;
+          font-weight: 600;
+          margin-right: 3px;
+        }
+      }
+
+      .right-side {
+        i {
+          margin-left: 15px;
+        }
+      }
+    }
+
+    .body {
+      border: 1px solid #dad9d9;
+      min-height: 24rem;
+      border-radius: 4px;
+      height: 25rem;
+      overflow-y: scroll;
+    }
+  }
+
+  .empty-container {
+    margin: 0 auto;
+    margin-top: 13rem;
+    text-align: center;
+    line-height: 3rem;
+
+    h2 {
+      color: #b1abab;
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    h6 {
+      font-weight: 400;
+      color: #b1abab;
+    }
+
+    button {
+      background: #282828;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 15px;
+
+      i {
+        margin-left: 4px;
+      }
+    }
+  }
+}
