@@ -63,7 +63,12 @@ export const CreateRow = () => {
             >
               Close
             </button>
-            <button type="button" class="btn btn-primary" onClick={create}>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onClick={create}
+              disabled={!title}
+            >
               Create
             </button>
           </div>

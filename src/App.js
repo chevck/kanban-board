@@ -9,6 +9,7 @@ import "./style.scss";
 
 function App() {
   const [deleteConfig, setDeleteConfig] = useState({});
+  const [createTicketConfig, setCreateTicketConfig] = useState({});
 
   const dispatch = useDispatch();
   const rows = useSelector(getRows);
@@ -51,10 +52,15 @@ function App() {
               <div className="header">
                 <div className="left-side">
                   <span className="title">{row.name}</span>
-                  <span className="count">2</span>
+                  <span className="count">{row.tickets.length}</span>
                 </div>
                 <div className="right-side">
-                  <i className="bi bi-plus-circle-fill"></i>
+                  <i
+                    className="bi bi-plus-circle-fill"
+                    data-bs-toggle="modal"
+                    data-bs-target="#createTicketModal"
+                    onClick={() => setCreateTicketConfig({ rowid: row.rowid })}
+                  />
                   <i
                     className="bi bi-trash3"
                     data-bs-toggle="modal"
@@ -69,13 +75,22 @@ function App() {
                   />
                 </div>
               </div>
-              <div className="body"></div>
+              <div className="body">
+                {row.tickets.map((ticket) => (
+                  <div className="ticket" key={ticket.id}>
+                    <h5>{ticket.summary}</h5>
+                    <div className="tags-wrapper">
+                      <p className="tag">{ticket.tag}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ))
         )}
       </div>
       <CreateRow />
-      <CreateTicket />
+      <CreateTicket rowid={createTicketConfig.rowid} />
       <DeleteModal
         type={deleteConfig?.type}
         name={deleteConfig.name}

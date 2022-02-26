@@ -30,6 +30,8 @@ export const boardReducerSlice = createSlice({
     },
     fetch_tickets: (state) => {},
     fetch_tickets_success: (state) => {},
+    create_tickets: (state) => {},
+    create_tickets_success: (state, { payload }) => {},
   },
 });
 
@@ -41,6 +43,10 @@ export const {
   error_call,
   delete_row,
   delete_row_success,
+  create_tickets,
+  create_tickets_success,
+  fetch_tickets,
+  fetch_tickets_success,
 } = boardReducerSlice.actions;
 
 export default boardReducerSlice.reducer;

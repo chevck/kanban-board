@@ -1,37 +1,33 @@
-import axios from "axios";
-import randomString from "random-string-gen";
 import React, { useState } from "react";
-import { endpoint_url } from "../assets/constants";
+import { useDispatch } from "react-redux";
+import { create_tickets } from "../redux/reducers";
 
-export const CreateTicket = () => {
-  const [body, setBody] = useState({ sumamry: "", description: "", tag: "" });
+export const CreateTicket = ({ rowid }) => {
+  const [body, setBody] = useState({ summary: "", description: "", tag: "" });
+  const dispatch = useDispatch();
 
   const closeModal = () => {
-    document.getElementById("close-button").click();
+    document.getElementById("create-ticket-close").click();
   };
 
   const create = async () => {
-    const { data } = await axios.post(`${endpoint_url}/rows`, {
-      // name: title,
-      ticketLength: 0,
-      rowid: `R-${randomString({ type: "numeric", length: 4 })}`,
-    });
-
+    const doc = { ...body, rowid };
+    dispatch(create_tickets(doc));
     closeModal();
   };
 
   return (
     <div
       class="modal fade"
-      id="exampleModal"
+      id="createTicketModal"
       tabindex="-1"
-      aria-labelledby="exampleModalLabel"
+      aria-labelledby="createTicketModalLabel"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
+            <h5 class="modal-title" id="createTicketModalLabel">
               Create Issue
             </h5>
             <button
@@ -39,6 +35,7 @@ export const CreateTicket = () => {
               class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
+              id="create-ticket-close"
             ></button>
           </div>
           <div class="modal-body">
@@ -49,26 +46,34 @@ export const CreateTicket = () => {
                 onChange={(e) => setBody({ ...body, summary: e.target.value })}
               />
             </p>
-            <div>
+            <p>
+              <label>Description</label>
               <textarea
                 className="form-control context-box"
                 onChange={(e) =>
                   setBody({ ...body, description: e.target.value })
                 }
               />
-            </div>
+            </p>
+            <p>
+              <label>Tag</label>
+              <select
+                className="form-control"
+                onChange={(e) => setBody({ ...body, tag: e.target.value })}
+              >
+                <option>Feature</option>
+                <option>Bug</option>
+              </select>
+            </p>
           </div>
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-              id="close-button"
+              class="btn btn-primary"
+              onClick={create}
+              disabled={!(body.description && body.summary && body.tag)}
             >
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" onClick={create}>
-              Create
+              Create Issue
             </button>
           </div>
         </div>
