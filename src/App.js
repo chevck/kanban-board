@@ -1,23 +1,21 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { endpoint_url } from "./assets/constants";
+import { useDispatch, useSelector } from "react-redux";
 import { CreateRow } from "./components/createRow";
 import { CreateTicket } from "./components/createTicket";
 import { DeleteModal } from "./components/DeleteModal";
+import { fetch_rows } from "./redux/reducers";
+import { getRows } from "./redux/selectors";
 import "./style.scss";
 
 function App() {
-  const [rows, setRows] = useState([]);
   const [deleteConfig, setDeleteConfig] = useState({});
 
-  const getRows = async () => {
-    const { data } = await axios.get(`${endpoint_url}/rows`);
-    setRows(data);
-  };
+  const dispatch = useDispatch();
+  const rows = useSelector(getRows);
 
   useEffect(() => {
-    getRows();
-  }, []);
+    dispatch(fetch_rows());
+  }, [dispatch]);
 
   return (
     <div className="container-fluid">
@@ -62,7 +60,11 @@ function App() {
                     data-bs-toggle="modal"
                     data-bs-target="#deleteModal"
                     onClick={() =>
-                      setDeleteConfig({ type: "row", name: row.name })
+                      setDeleteConfig({
+                        type: "row",
+                        name: row.name,
+                        id: row.id,
+                      })
                     }
                   />
                 </div>
@@ -72,9 +74,13 @@ function App() {
           ))
         )}
       </div>
-      <CreateRow setRows={setRows} rows={rows} />
+      <CreateRow />
       <CreateTicket />
-      <DeleteModal type={deleteConfig?.type} name={deleteConfig.name} />
+      <DeleteModal
+        type={deleteConfig?.type}
+        name={deleteConfig.name}
+        id={deleteConfig.id}
+      />
     </div>
   );
 }

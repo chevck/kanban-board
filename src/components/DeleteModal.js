@@ -1,46 +1,50 @@
-import axios from "axios";
 import React, { useState } from "react";
-import { endpoint_url } from "../assets/constants";
+import { useDispatch } from "react-redux";
+import { delete_row } from "../redux/reducers";
+
 const ROW = "row";
 
-export const DeleteModal = ({ rows, setRows, type, name }) => {
+export const DeleteModal = ({ type, name, id }) => {
   const [confirmName, setConfirmName] = useState("");
+  const dispatch = useDispatch();
 
   const closeModal = () => {
-    document.getElementById("close-button").click();
+    document.getElementById("delete-close-button").click();
   };
 
-  const deleteRow = async () => {};
+  const deleteRow = async () => {
+    dispatch(delete_row({ id }));
+  };
 
   const deleteFn = async () => {
     if (type === ROW) {
-      return deleteRow();
+      deleteRow();
     }
     closeModal();
   };
 
   return (
     <div
-      class="modal fade"
+      className="modal fade"
       id="deleteModal"
       tabindex="-1"
       aria-labelledby="deleteModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id="deleteModalLabel">
               {type === ROW ? "Confirm Section Delete" : ""}
             </h5>
             <button
               type="button"
-              class="btn-close"
+              className="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body">
+          <div className="modal-body">
             <p>
               {type === ROW ? (
                 <>
@@ -59,18 +63,18 @@ export const DeleteModal = ({ rows, setRows, type, name }) => {
               />
             </div>
           </div>
-          <div class="modal-footer">
+          <div className="modal-footer">
             <button
               type="button"
-              class="btn btn-secondary"
+              className="btn btn-secondary"
               data-bs-dismiss="modal"
-              id="close-button"
+              id="delete-close-button"
             >
               Close
             </button>
             <button
               type="button"
-              class="btn btn-danger"
+              className="btn btn-danger"
               onClick={deleteFn}
               disabled={name !== confirmName}
             >

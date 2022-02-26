@@ -1,22 +1,25 @@
-import axios from "axios";
 import randomString from "random-string-gen";
 import React, { useState } from "react";
-import { endpoint_url } from "../assets/constants";
+import { useDispatch } from "react-redux";
+import { create_row } from "../redux/reducers";
 
-export const CreateRow = ({ rows, setRows }) => {
+export const CreateRow = () => {
   const [title, setTitle] = useState("");
+  const dispatch = useDispatch();
 
   const closeModal = () => {
     document.getElementById("close-button").click();
   };
 
   const create = async () => {
-    const { data } = await axios.post(`${endpoint_url}/rows`, {
-      name: title,
-      ticketLength: 0,
-      rowid: `R-${randomString({ type: "numeric", length: 4 })}`,
-    });
-    setRows([...rows, data]);
+    dispatch(
+      create_row({
+        name: title,
+        ticketLength: 0,
+        rowid: `R-${randomString({ type: "numeric", length: 4 })}`,
+      })
+    );
+    setTitle("");
     closeModal();
   };
 
@@ -47,6 +50,7 @@ export const CreateRow = ({ rows, setRows }) => {
               <input
                 className="form-control"
                 onChange={(e) => setTitle(e.target.value)}
+                value={title}
               />
             </p>
           </div>
