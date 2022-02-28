@@ -12,6 +12,20 @@
       "tag": "Feature",
       "rowid": "R-0654",
       "id": 1
+    },
+    {
+      "summary": "Creating a new board that is called Kanban and checking if it's fine",
+      "description": "I just want to create a new board",
+      "tag": "Feature",
+      "rowid": "R-0654",
+      "id": 2
+    },
+    {
+      "summary": "Fix Air Quotes",
+      "description": "Fixing Air Quotes",
+      "tag": "Bug",
+      "rowid": "R-1355",
+      "id": 3
     }
   ],
   "rows": [
@@ -22,16 +36,16 @@
       "id": 1
     },
     {
-      "name": "Reviews",
-      "ticketLength": 0,
-      "rowid": "R-8386",
-      "id": 2
-    },
-    {
       "name": "In Progress",
       "ticketLength": 0,
       "rowid": "R-1355",
       "id": 3
+    },
+    {
+      "name": "Awaiting Code Review",
+      "ticketLength": 0,
+      "rowid": "R-2561",
+      "id": 4
     }
   ]
 }

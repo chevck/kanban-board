@@ -61,6 +61,9 @@ export const CreateTicket = ({ rowid }) => {
                 className="form-control"
                 onChange={(e) => setBody({ ...body, tag: e.target.value })}
               >
+                <option selected disabled>
+                  Select Tag
+                </option>
                 <option>Feature</option>
                 <option>Bug</option>
               </select>
