@@ -86,37 +86,77 @@ i {
         border-radius: 4px;
         cursor: pointer;
         margin-bottom: 14px;
+        display: flex;
+        justify-content: space-between;
 
-        h5 {
-          font-size: 15px;
-          font-weight: 700;
-          width: 15rem;
-          line-height: 23px;
-          font-family: Euclid Circular A SemiBold;
-          margin-bottom: 20px;
+        .left {
+          h5 {
+            font-size: 15px;
+            font-weight: 700;
+            width: 15rem;
+            line-height: 23px;
+            font-family: Euclid Circular A SemiBold;
+            margin-bottom: 20px;
+          }
+
+          .tags-wrapper {
+            margin-bottom: 7px;
+            .tag {
+              font-size: 11px;
+              padding: 2px 6px;
+              color: white;
+              font-weight: 600;
+              text-transform: lowercase;
+              border-radius: 5px;
+              width: fit-content;
+              margin-bottom: 0;
+
+              &.feature {
+                border: 1px solid #699ddc;
+                background: #6a9ddc;
+              }
+
+              &.bug {
+                border: 1px solid #d83a3a;
+                background: #d83a3a;
+              }
+            }
+          }
         }
 
-        .tags-wrapper {
-          margin-bottom: 7px;
-          .tag {
-            font-size: 11px;
-            padding: 2px 6px;
-            color: white;
-            font-weight: 600;
-            text-transform: lowercase;
-            border-radius: 5px;
-            width: fit-content;
-            margin-bottom: 0;
-
-            &.feature {
-              border: 1px solid #699ddc;
-              background: #6a9ddc;
+        .right {
+          .btn-group {
+            // display: none;
+            button {
+              background: #89898994;
+              border: none;
+              box-shadow: none;
+              &::after {
+                content: none;
+              }
             }
+            li {
+              margin-left: 7px;
+              font-size: 12px;
+              margin-bottom: 4px;
 
-            &.bug {
-              border: 1px solid #d83a3a;
-              background: #d83a3a;
+              i {
+                position: relative;
+                top: 1px;
+                margin-right: 5px;
+              }
+
+              &:hover {
+                background-color: #282828;
+                color: white;
+              }
             }
+          }
+        }
+
+        &.show {
+          .btn-group {
+            display: block;
           }
         }
       }

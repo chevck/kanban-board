@@ -1,50 +1,43 @@
 {
   "tickets": [
     {
-      "id": 0,
-      "title": "Make Ticket",
-      "body": "This is an initial ticket",
-      "rowid": "R-100"
-    },
-    {
-      "summary": "LCL Shipment",
-      "description": "1. Finish up Line Items on LCL Shipment",
+      "summary": "Ocean LCL Export",
+      "description": "Ocean LCL Export shipment is what you should do.",
       "tag": "Feature",
-      "rowid": "R-0654",
+      "rowid": "R-6120",
       "id": 1
     },
     {
-      "summary": "Creating a new board that is called Kanban and checking if it's fine",
-      "description": "I just want to create a new board",
+      "summary": "Ocean LCL Import",
+      "description": "Ocean LCL Import is going to be done.",
       "tag": "Feature",
-      "rowid": "R-0654",
+      "rowid": "R-6120",
       "id": 2
-    },
-    {
-      "summary": "Fix Air Quotes",
-      "description": "Fixing Air Quotes",
-      "tag": "Bug",
-      "rowid": "R-1355",
-      "id": 3
     }
   ],
   "rows": [
     {
-      "name": "To-Dos",
+      "name": "ToDo",
       "ticketLength": 0,
-      "rowid": "R-0654",
+      "rowid": "R-6120",
       "id": 1
     },
     {
       "name": "In Progress",
       "ticketLength": 0,
-      "rowid": "R-1355",
+      "rowid": "R-6307",
+      "id": 2
+    },
+    {
+      "name": "Awaiting Review",
+      "ticketLength": 0,
+      "rowid": "R-7974",
       "id": 3
     },
     {
-      "name": "Awaiting Code Review",
+      "name": "QA",
       "ticketLength": 0,
-      "rowid": "R-2561",
+      "rowid": "R-3470",
       "id": 4
     }
   ]

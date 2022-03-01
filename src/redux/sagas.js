@@ -11,14 +11,16 @@ import {
   error_call,
   fetch_rows,
   fetch_rows_success,
+  fetch_ticket,
+  fetch_ticket_success,
   reorder_tickets,
+  reorder_tickets_success,
 } from "./reducers";
 import { getRows } from "./selectors";
 
 function* fetchRows() {
   try {
     const { data } = yield call(axios.get, `${endpoint_url}/rows`);
-    console.log({ data });
     let rows = [];
     for (const row of data) {
       const { data } = yield call(
@@ -76,6 +78,41 @@ function* createTicket({ payload }) {
 function* reorderTicket({ payload }) {
   console.log({ payload });
   try {
+    let { data: tickets } = yield call(axios.get, `${endpoint_url}/tickets`);
+    let rowid = "";
+    const sourceticket = tickets[payload.source.index];
+    const destinationticket = tickets[payload.destination.index];
+    yield call(
+      axios.put,
+      `${endpoint_url}/tickets/${sourceticket.id}`,
+      destinationticket
+    );
+    yield call(
+      axios.put,
+      `${endpoint_url}/tickets/${sourceticket.id}`,
+      sourceticket
+    );
+    const { data } = yield call(axios.get, `${endpoint_url}/tickets`);
+    console.log("mnewwww,", data);
+    if (sourceticket.rowid === destinationticket.rowid) {
+      rowid = sourceticket.rowid;
+    }
+    yield put({
+      type: reorder_tickets_success.type,
+      payload: { res: data, rowid },
+    });
+  } catch (error) {
+    yield put({ type: error_call.type, payload: error });
+  }
+}
+
+function* getATicket({ payload }) {
+  try {
+    const { data } = yield call(
+      axios.get,
+      `${endpoint_url}/tickets/${payload.id}`
+    );
+    yield put({ type: fetch_ticket_success.type, payload: data });
   } catch (error) {
     yield put({ type: error_call.type, payload: error });
   }
@@ -87,6 +124,7 @@ function* boardSagas() {
   yield takeEvery(delete_row.type, deleteRow);
   yield takeEvery(create_tickets.type, createTicket);
   yield takeEvery(reorder_tickets.type, reorderTicket);
+  yield takeEvery(fetch_ticket.type, getATicket);
 }
 
 export default boardSagas;

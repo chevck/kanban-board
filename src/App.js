@@ -7,37 +7,54 @@ import { fetch_rows, reorder_tickets } from "./redux/reducers";
 import { getRows } from "./redux/selectors";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "./style.scss";
+import { ViewTicket } from "./components/viewTicket";
 
 function App() {
   const [deleteConfig, setDeleteConfig] = useState({});
   const [createTicketConfig, setCreateTicketConfig] = useState({});
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
 
   const dispatch = useDispatch();
   const rows = useSelector(getRows);
 
   useEffect(() => {
     dispatch(fetch_rows());
-    console.log("here");
   }, [dispatch]);
 
+  useEffect(() => {
+    const props = window.location;
+    const query = props.search;
+    const split = query.split("=");
+    const id = Number(split[1]);
+    setSelectedTicketId(id);
+  }, []);
+
   const onDragEnd = (result) => {
-    console.log({ result });
     if (
       !result.destination ||
       result.destination.index === result.source.index
     ) {
       return;
     }
-
     dispatch(reorder_tickets(result));
+  };
 
-    // const quotes = reorder(
-    //   state.quotes,
-    //   result.source.index,
-    //   result.destination.index
-    // );
+  const onMouseOver = (id) => {
+    document.getElementById(id).classList.add("show");
+  };
 
-    // setState({ quotes });
+  const onMouseRemove = (id) => {
+    document.getElementById(id).classList.remove("show");
+  };
+
+  const copyTicketLink = (id) => {
+    var inputc = document.body.appendChild(document.createElement("input"));
+    inputc.value = `${window.location.origin}/tickets?view=${id}`;
+    inputc.focus();
+    inputc.select();
+    document.execCommand("copy");
+    inputc.parentNode.removeChild(inputc);
+    alert("URL Copied.");
   };
 
   return (
@@ -117,16 +134,49 @@ function App() {
                               key={ticket.id}
                               index={index}
                               ref={provided.innerRef}
+                              id={`ticket-${ticket.id}`}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
+                              onMouseOver={() =>
+                                onMouseOver(`ticket-${ticket.id}`)
+                              }
+                              onMouseOut={() =>
+                                onMouseRemove(`ticket-${ticket.id}`)
+                              }
                             >
-                              <h5>{ticket.summary}</h5>
-                              <div className="tags-wrapper">
-                                <p
-                                  className={`tag ${ticket.tag.toLowerCase()}`}
-                                >
-                                  {ticket.tag}
-                                </p>
+                              <div className="left">
+                                <h5>{ticket.summary}</h5>
+                                <div className="tags-wrapper">
+                                  <p
+                                    className={`tag ${ticket.tag.toLowerCase()}`}
+                                  >
+                                    {ticket.tag}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="right">
+                                <div class="btn-group">
+                                  <button
+                                    class="btn btn-secondary btn-sm dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                  >
+                                    <i class="bi bi-three-dots-vertical" />
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                    <li
+                                      onClick={() => copyTicketLink(ticket.id)}
+                                    >
+                                      <i class="bi bi-link-45deg"></i> Share
+                                      Link
+                                    </li>
+                                    <li>
+                                      <i class="bi bi-trash2-fill"></i> Delete
+                                      Ticket
+                                    </li>
+                                  </ul>
+                                </div>
                               </div>
                             </div>
                           )}
@@ -147,6 +197,7 @@ function App() {
         name={deleteConfig.name}
         id={deleteConfig.id}
       />
+      <ViewTicket id={selectedTicketId} />
     </div>
   );
 }
