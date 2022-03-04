@@ -1,1 +1,1 @@
-export const endpoint_url = "http://localhost:3000";
+export const endpoint_url = "https://my-json-server-dev.herokuapp.com";
