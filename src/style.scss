@@ -17,7 +17,7 @@ i {
 }
 
 .context-box {
-  height: 8rem;
+  height: auto;
 }
 
 .modal-footer {
@@ -30,8 +30,8 @@ i {
   padding: 3rem;
   overflow-x: scroll;
   min-width: 4rem;
-  background-color: #f0f0f0;
-  height: 40rem;
+  background-color: #d1d1d1;
+  height: 35rem;
 
   .board-row {
     width: 20rem;
@@ -73,7 +73,6 @@ i {
     }
 
     .body {
-      // border: 1px solid #dad9d9;
       min-height: 24rem;
       border-radius: 4px;
       height: 25rem;
@@ -126,7 +125,7 @@ i {
 
         .right {
           .btn-group {
-            // display: none;
+            display: none;
             button {
               background: #89898994;
               border: none;

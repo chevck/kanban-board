@@ -8,6 +8,7 @@ import {
   create_tickets_success,
   delete_row,
   delete_row_success,
+  delete_ticket,
   error_call,
   fetch_rows,
   fetch_rows_success,
@@ -76,30 +77,46 @@ function* createTicket({ payload }) {
 }
 
 function* reorderTicket({ payload }) {
-  console.log({ payload });
   try {
     let { data: tickets } = yield call(axios.get, `${endpoint_url}/tickets`);
     let rowid = "";
     const sourceticket = tickets[payload.source.index];
     const destinationticket = tickets[payload.destination.index];
-    yield call(
+    const { data: d1 } = yield call(
       axios.put,
       `${endpoint_url}/tickets/${sourceticket.id}`,
       destinationticket
     );
-    yield call(
+    const { data: d2 } = yield call(
       axios.put,
-      `${endpoint_url}/tickets/${sourceticket.id}`,
+      `${endpoint_url}/tickets/${destinationticket.id}`,
       sourceticket
     );
-    const { data } = yield call(axios.get, `${endpoint_url}/tickets`);
-    console.log("mnewwww,", data);
     if (sourceticket.rowid === destinationticket.rowid) {
       rowid = sourceticket.rowid;
     }
+    const rows = yield select(getRows);
+    const rowIndex = rows.findIndex((row) => row.rowid === rowid);
+    let row = rows[rowIndex];
+    let rowTickets = row.tickets;
+    let newT = [...rowTickets];
+
+    for (let ticket of rowTickets) {
+      if (ticket.id === payload.source.index + 1) {
+        let index = rowTickets.findIndex((x) => x.id === ticket.id);
+        newT[index] = d1;
+      }
+
+      if (ticket.id === payload.destination.index + 1) {
+        let index = rowTickets.findIndex((x) => x.id === ticket.id);
+        newT[index] = d2;
+      }
+    }
+
+    let newRow = { ...row, tickets: newT };
     yield put({
       type: reorder_tickets_success.type,
-      payload: { res: data, rowid },
+      payload: { newRow, rowIndex },
     });
   } catch (error) {
     yield put({ type: error_call.type, payload: error });
@@ -118,6 +135,15 @@ function* getATicket({ payload }) {
   }
 }
 
+function* deleteTicket({ payload }) {
+  try {
+    yield call(axios.delete, `${endpoint_url}/tickets/${payload.id}`);
+    yield call(fetchRows);
+  } catch (error) {
+    yield put({ type: error_call.type, payload: error });
+  }
+}
+
 function* boardSagas() {
   yield takeEvery(fetch_rows.type, fetchRows);
   yield takeEvery(create_row.type, createRow);
@@ -125,6 +151,7 @@ function* boardSagas() {
   yield takeEvery(create_tickets.type, createTicket);
   yield takeEvery(reorder_tickets.type, reorderTicket);
   yield takeEvery(fetch_ticket.type, getATicket);
+  yield takeEvery(delete_ticket.type, deleteTicket);
 }
 
 export default boardSagas;

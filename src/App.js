@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CreateRow } from "./components/createRow";
 import { CreateTicket } from "./components/createTicket";
 import { DeleteModal } from "./components/DeleteModal";
-import { fetch_rows, reorder_tickets } from "./redux/reducers";
+import { delete_ticket, fetch_rows, reorder_tickets } from "./redux/reducers";
 import { getRows } from "./redux/selectors";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "./style.scss";
@@ -30,6 +30,7 @@ function App() {
   }, []);
 
   const onDragEnd = (result) => {
+    console.log("dragged again", result);
     if (
       !result.destination ||
       result.destination.index === result.source.index
@@ -56,6 +57,12 @@ function App() {
     inputc.parentNode.removeChild(inputc);
     alert("URL Copied.");
   };
+
+  const deleteTicket = (id) => {
+    dispatch(delete_ticket({ id }));
+  };
+
+  console.log({ rows });
 
   return (
     <div className="container-fluid">
@@ -132,7 +139,7 @@ function App() {
                             <div
                               className="ticket tickets"
                               key={ticket.id}
-                              index={index}
+                              index={Number(ticket.id)}
                               ref={provided.innerRef}
                               id={`ticket-${ticket.id}`}
                               {...provided.draggableProps}
@@ -171,7 +178,7 @@ function App() {
                                       <i class="bi bi-link-45deg"></i> Share
                                       Link
                                     </li>
-                                    <li>
+                                    <li onClick={() => deleteTicket(ticket.id)}>
                                       <i class="bi bi-trash2-fill"></i> Delete
                                       Ticket
                                     </li>
