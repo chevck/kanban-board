@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { CreateRow } from "./components/createRow";
 import { CreateTicket } from "./components/createTicket";
 import { DeleteModal } from "./components/DeleteModal";
-import { delete_ticket, fetch_rows, reorder_tickets } from "./redux/reducers";
+import {
+  delete_ticket,
+  fetch_rows,
+  move_ticket,
+  reorder_tickets,
+} from "./redux/reducers";
 import { getRows } from "./redux/selectors";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "./style.scss";
@@ -30,14 +35,18 @@ function App() {
   }, []);
 
   const onDragEnd = (result) => {
-    console.log("dragged again", result);
     if (
       !result.destination ||
-      result.destination.index === result.source.index
+      (result.source.droppableId === result.destination.droppableId &&
+        result.destination.index === result.source.index)
     ) {
       return;
     }
-    dispatch(reorder_tickets(result));
+    if (result.destination.droppableId === result.source.droppableId) {
+      dispatch(reorder_tickets(result));
+    } else {
+      dispatch(move_ticket(result));
+    }
   };
 
   const onMouseOver = (id) => {
@@ -62,8 +71,6 @@ function App() {
     dispatch(delete_ticket({ id }));
   };
 
-  console.log({ rows });
-
   return (
     <div className="container-fluid">
       <div>
@@ -79,29 +86,29 @@ function App() {
         ) : null}
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="list">
-          {(provided, index) => (
-            <div
-              className="board-rows-wrapper list"
-              key={index}
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {!rows.length ? (
-                <div className="empty-container">
-                  <h2>Welcome to this Kanban Board</h2>
-                  <h6>Click the button below to create sections</h6>
-                  <button
-                    className="btn"
-                    data-bs-toggle="modal"
-                    data-bs-target="#exampleModal"
+        <div className="board-rows-wrapper list">
+          {!rows.length ? (
+            <div className="empty-container">
+              <h2>Welcome to this Kanban Board</h2>
+              <h6>Click the button below to create sections</h6>
+              <button
+                className="btn"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                New Section <i className="bi bi-plus-circle-fill"></i>{" "}
+              </button>
+            </div>
+          ) : (
+            rows.map((row, index) => (
+              <Droppable droppableId={`${row.rowid}`} key={index}>
+                {(provided, index) => (
+                  <div
+                    className="board-row"
+                    key={row.id}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
                   >
-                    New Section <i className="bi bi-plus-circle-fill"></i>{" "}
-                  </button>
-                </div>
-              ) : (
-                rows.map((row, index) => (
-                  <div className="board-row" key={index}>
                     <div className="header">
                       <div className="left-side">
                         <span className="title">{row.name}</span>
@@ -134,12 +141,15 @@ function App() {
                     </div>
                     <div className="body">
                       {row.tickets.map((ticket, index) => (
-                        <Draggable draggableId={ticket.summary} index={index}>
+                        <Draggable
+                          draggableId={ticket.summary}
+                          index={index}
+                          key={index}
+                        >
                           {(provided) => (
                             <div
                               className="ticket tickets"
                               key={ticket.id}
-                              index={Number(ticket.id)}
                               ref={provided.innerRef}
                               id={`ticket-${ticket.id}`}
                               {...provided.draggableProps}
@@ -191,11 +201,11 @@ function App() {
                       ))}
                     </div>
                   </div>
-                ))
-              )}
-            </div>
+                )}
+              </Droppable>
+            ))
           )}
-        </Droppable>
+        </div>
       </DragDropContext>
       <CreateRow />
       <CreateTicket rowid={createTicketConfig.rowid} />

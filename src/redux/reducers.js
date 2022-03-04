@@ -43,15 +43,20 @@ export const boardReducerSlice = createSlice({
     },
     reorder_tickets: (state) => {},
     reorder_tickets_success: (state, { payload }) => {
-      console.log({ payload });
       state.rows[payload.rowIndex] = payload.newRow;
     },
     fetch_ticket: () => {},
     fetch_ticket_success: (state, { payload }) => {
-      console.log({ payload });
       state.ticket = payload;
     },
     delete_ticket: () => {},
+    move_ticket: () => {},
+    move_ticket_success: (state, { payload }) => {
+      let newrows = state.rows;
+      newrows[payload.sourcerowIndex] = payload.result[payload.sourcerowIndex];
+      newrows[payload.destrowIndex] = payload.result[payload.destrowIndex];
+      state.rows = newrows;
+    },
   },
 });
 
@@ -72,6 +77,8 @@ export const {
   fetch_ticket,
   fetch_ticket_success,
   delete_ticket,
+  move_ticket,
+  move_ticket_success,
 } = boardReducerSlice.actions;
 
 export default boardReducerSlice.reducer;

@@ -14,6 +14,8 @@ import {
   fetch_rows_success,
   fetch_ticket,
   fetch_ticket_success,
+  move_ticket,
+  move_ticket_success,
   reorder_tickets,
   reorder_tickets_success,
 } from "./reducers";
@@ -78,45 +80,66 @@ function* createTicket({ payload }) {
 
 function* reorderTicket({ payload }) {
   try {
-    let { data: tickets } = yield call(axios.get, `${endpoint_url}/tickets`);
-    let rowid = "";
+    const { data: tickets } = yield call(axios.get, `${endpoint_url}/tickets`);
     const sourceticket = tickets[payload.source.index];
+
+    let rowid = sourceticket.rowid;
     const destinationticket = tickets[payload.destination.index];
-    const { data: d1 } = yield call(
-      axios.put,
-      `${endpoint_url}/tickets/${sourceticket.id}`,
-      destinationticket
-    );
-    const { data: d2 } = yield call(
-      axios.put,
-      `${endpoint_url}/tickets/${destinationticket.id}`,
-      sourceticket
-    );
-    if (sourceticket.rowid === destinationticket.rowid) {
-      rowid = sourceticket.rowid;
-    }
     const rows = yield select(getRows);
     const rowIndex = rows.findIndex((row) => row.rowid === rowid);
-    let row = rows[rowIndex];
-    let rowTickets = row.tickets;
-    let newT = [...rowTickets];
+    const row = rows[rowIndex];
+    let newT = [...row.tickets];
 
-    for (let ticket of rowTickets) {
-      if (ticket.id === payload.source.index + 1) {
-        let index = rowTickets.findIndex((x) => x.id === ticket.id);
-        newT[index] = d1;
-      }
-
-      if (ticket.id === payload.destination.index + 1) {
-        let index = rowTickets.findIndex((x) => x.id === ticket.id);
-        newT[index] = d2;
-      }
-    }
+    const [reorderedTicket] = newT.splice(payload.source.index, 1);
+    newT.splice(payload.destination.index, 0, reorderedTicket);
 
     let newRow = { ...row, tickets: newT };
     yield put({
       type: reorder_tickets_success.type,
       payload: { newRow, rowIndex },
+    });
+    yield call(
+      axios.put,
+      `${endpoint_url}/tickets/${destinationticket.id}`,
+      sourceticket
+    );
+    yield call(
+      axios.put,
+      `${endpoint_url}/tickets/${sourceticket.id}`,
+      destinationticket
+    );
+  } catch (error) {
+    yield put({ type: error_call.type, payload: error });
+  }
+}
+
+function* moveTicket({ payload }) {
+  try {
+    const rows = yield select(getRows);
+    const sourcerowIndex = rows.findIndex(
+      (row) => row.rowid === payload.source.droppableId
+    );
+    const sourcerow = rows[sourcerowIndex];
+    const destrowIndex = rows.findIndex(
+      (row) => row.rowid === payload.destination.droppableId
+    );
+    const destrow = rows[destrowIndex];
+    const movedTicket = sourcerow.tickets[payload.source.index];
+    const { data: newmovedticket } = yield call(
+      axios.put,
+      `${endpoint_url}/tickets/${movedTicket.id}`,
+      { ...movedTicket, rowid: destrow.rowid }
+    );
+    let sourceRowTickets = [...sourcerow.tickets];
+    sourceRowTickets.splice(payload.source.index, 1);
+    let destinationRowTickets = [...destrow.tickets];
+    destinationRowTickets.splice(payload.destination.index, 0, newmovedticket);
+    let result = {};
+    result[sourcerowIndex] = { ...sourcerow, tickets: sourceRowTickets };
+    result[destrowIndex] = { ...destrow, tickets: destinationRowTickets };
+    yield put({
+      type: move_ticket_success.type,
+      payload: { result, sourcerowIndex, destrowIndex },
     });
   } catch (error) {
     yield put({ type: error_call.type, payload: error });
@@ -152,6 +175,7 @@ function* boardSagas() {
   yield takeEvery(reorder_tickets.type, reorderTicket);
   yield takeEvery(fetch_ticket.type, getATicket);
   yield takeEvery(delete_ticket.type, deleteTicket);
+  yield takeEvery(move_ticket.type, moveTicket);
 }
 
 export default boardSagas;
